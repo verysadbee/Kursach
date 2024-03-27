@@ -114,4 +114,9 @@ class Users extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 
         return null;
     }
+
+    public function __toString()
+    {
+        return $this->username;
+    }
 }

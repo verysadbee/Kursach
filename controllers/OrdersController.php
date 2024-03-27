@@ -7,6 +7,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Products;
+use Yii;
 
 /**
  * OrdersController implements the CRUD actions for Orders model.
@@ -78,10 +80,16 @@ class OrdersController extends Controller
     public function actionCreate()
     {
         $model = new Orders();
+        $products = Products::find()->all();
+        $productsList = \yii\helpers\ArrayHelper::map($products, 'product_id', 'product_name');
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'order_id' => $model->order_id]);
+            if ($model->load($this->request->post())) {
+                $model->user_id = Yii::$app->user->identity->user_id;
+                $model->total_amount = $model->quantity * $model->product->price;
+                if ($model->save()){
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -89,6 +97,7 @@ class OrdersController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'productsList' => $productsList,
         ]);
     }
 

@@ -19,6 +19,25 @@ use Yii;
  */
 class Orders extends \yii\db\ActiveRecord
 {
+    const STATUS_NEW = 1;
+    const STATUS_IN_PROGRESS = 2;
+    const STATUS_COMPLETED = 3;
+
+    // Определите метод, который возвращает текстовое описание статуса
+    public function getStatusDescription()
+    {
+        switch ($this->status_id) {
+            case self::STATUS_NEW:
+                return 'Новое';
+            case self::STATUS_IN_PROGRESS:
+                return 'В процессе';
+            case self::STATUS_COMPLETED:
+                return 'Завершено';
+            default:
+                return 'Неизвестно';
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -33,11 +52,10 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['order_id'], 'required'],
-            [['order_id', 'status_id', 'user_id'], 'integer'],
+            [['product_id','quantity'], 'integer'],
+            [['status_id', 'user_id'], 'integer'],
             [['order_date'], 'safe'],
             [['total_amount'], 'number'],
-            [['order_id'], 'unique'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => OrderStatus::class, 'targetAttribute' => ['status_id' => 'status_id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['user_id' => 'user_id']],
         ];
@@ -49,11 +67,13 @@ class Orders extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'product_id' => 'Product ID',
             'order_id' => 'Order ID',
             'status_id' => 'Status ID',
             'user_id' => 'User ID',
             'order_date' => 'Order Date',
             'total_amount' => 'Total Amount',
+            'quantity' => 'Quantity',
         ];
     }
 
@@ -85,5 +105,10 @@ class Orders extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::class, ['user_id' => 'user_id']);
+    }
+
+    public function getProduct()
+    {
+        return $this->hasOne(Products::class, ['product_id' => 'product_id']);
     }
 }

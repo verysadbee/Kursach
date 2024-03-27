@@ -8,18 +8,16 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="orders-form">
+<div class="orders-create">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
+    <?= $form->field($model, 'product_id')->dropDownList($productsList, ['prompt' => 'Select Product']) ?>
 
-    <?= $form->field($model, 'order_date')->textInput() ?>
-
-    <?= $form->field($model, 'total_amount')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'quantity')->textInput() ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Create', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
